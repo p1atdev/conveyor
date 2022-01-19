@@ -48,6 +48,25 @@ async function handleRequest(request: Request): Promise<Response> {
         }
     }
 
+    if (pathname.startsWith("/yt")) {
+        try {
+            const res = await fetch("https://www.youtube.com")
+            const html = `
+            <iframe id="youtube" title="YouTube" src="https://www.youtube.com" allowpaymentrequest allowfullscreen width="100%" height="100%">
+            </iframe>
+            `
+            const headers = res.headers
+            headers.set("Content-Security-Policy", "default-src *;")
+            return new Response(html, { status: 200, headers: headers })
+        } catch (err) {
+            console.error(err)
+            return new Response(`<h1>Internal Server Error</h1> <p>${err}</p>`, {
+                status: 500,
+                headers: { "content-type": "text/html" },
+            })
+        }
+    }
+
     return new Response(
         `<html>
         <head>
